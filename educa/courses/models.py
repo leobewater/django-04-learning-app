@@ -3,6 +3,8 @@ from django.contrib.contenttypes.fields import GenericForeignKey
 from django.contrib.contenttypes.models import ContentType
 from django.db import models
 
+from .fields import OrderField
+
 
 class Subject(models.Model):
     title = models.CharField(max_length=200)
@@ -34,7 +36,7 @@ class Course(models.Model):
     class Meta:
         ordering = ['-created']
 
-    def __str(self):
+    def __str__(self):
         return self.title
 
 
@@ -46,9 +48,14 @@ class Module(models.Model):
     )
     title = models.CharField(max_length=200)
     description = models.TextField(blank=True)
+    # Custom order field
+    order = OrderField(blank=True, for_fields=['course'])
 
-    def __str(self):
-        return self.title
+    class Meta:
+        ordering = ['order']
+
+    def __str__(self):
+        return f'{self.order}. {self.title}'
 
 
 class Content(models.Model):
@@ -62,10 +69,15 @@ class Content(models.Model):
         on_delete=models.CASCADE,
         limit_choices_to={
             'model__in': ('text', 'video', 'image', 'file')
-        }
+        },
     )
     object_id = models.PositiveIntegerField()
     item = GenericForeignKey('content_type', 'object_id')
+    # Custom order field
+    order = OrderField(blank=True, for_fields=['module'])
+
+    class Meta:
+        ordering = ['order']
 
 
 # Abstract model
