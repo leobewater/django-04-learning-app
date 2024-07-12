@@ -36,7 +36,7 @@ class OwnerCourseEditMixin(OwnerCourseMixin, OwnerEditMixin):
 
 
 # Class-based views
-class ManageCourseListView(OwnerCourseMixin):
+class ManageCourseListView(OwnerCourseMixin, ListView):
     template_name = 'courses/manage/course/list.html'
     permission_required = 'courses.view_course'
 
